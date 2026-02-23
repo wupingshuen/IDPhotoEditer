@@ -87,7 +87,7 @@ export function useImageProcessing() {
       }
       
       setProcessingStep('Compositing...');
-      const composite = compositeWithMask(processedImage, mask, '#FFFFFF', 3);
+      const composite = compositeWithMask(processedImage, mask, '#FFFFFF', 8);
       setCompositeImage(composite);
       
       setProcessingStep('Calculating crop...');

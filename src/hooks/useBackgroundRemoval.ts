@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-const MAX_PROCESSING_SIZE = 1024;
+const MAX_PROCESSING_SIZE = 2048;
 
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -97,6 +97,9 @@ export function useBackgroundRemoval() {
                 image.naturalHeight
               );
               const fullSizeCtx = getContext2D(fullSizeMask);
+              
+              fullSizeCtx.imageSmoothingEnabled = true;
+              fullSizeCtx.imageSmoothingQuality = 'high';
               
               if (scale !== 1) {
                 fullSizeCtx.drawImage(
