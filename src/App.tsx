@@ -27,7 +27,7 @@ function App() {
   const hasImage = originalImage !== null;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -53,81 +53,81 @@ function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-sm text-red-700">{error}</p>
           </div>
         )}
 
-        {!hasImage ? (
-          <div className="max-w-xl mx-auto">
-            <div className="bg-white rounded-xl shadow-sm p-8">
-              <h2 className="text-lg font-medium text-gray-900 mb-4 text-center">
-                Upload Your Portrait Photo
-              </h2>
-              <ImageUploader 
-                onImageLoaded={handleImageLoaded}
-                disabled={isProcessing}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
+              <ControlPanel
+                adjustments={adjustments}
+                selectedPreset={selectedPreset}
+                onAdjustmentsChange={updateAdjustments}
+                onPresetChange={updatePreset}
+                disabled={isProcessing || !hasImage}
               />
-              
-              <div className="mt-6 space-y-2">
-                <h3 className="text-sm font-medium text-gray-700">Tips for best results:</h3>
-                <ul className="text-sm text-gray-500 space-y-1">
-                  <li>• Use a well-lit photo with your face clearly visible</li>
-                  <li>• Face the camera directly with a neutral expression</li>
-                  <li>• Avoid photos with busy backgrounds</li>
-                  <li>• Higher resolution photos produce better results</li>
-                </ul>
-              </div>
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
-                <ControlPanel
-                  adjustments={adjustments}
-                  selectedPreset={selectedPreset}
-                  onAdjustmentsChange={updateAdjustments}
-                  onPresetChange={updatePreset}
+
+          <div className="lg:col-span-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              {!hasImage ? (
+                <div>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4 text-center">
+                    Upload Your Portrait Photo
+                  </h2>
+                  <ImageUploader 
+                    onImageLoaded={handleImageLoaded}
+                    disabled={isProcessing}
+                  />
+                  
+                  <div className="mt-6 space-y-2">
+                    <h3 className="text-sm font-medium text-gray-700">Tips for best results:</h3>
+                    <ul className="text-sm text-gray-500 space-y-1">
+                      <li>• Use a well-lit photo with your face clearly visible</li>
+                      <li>• Face the camera directly with a neutral expression</li>
+                      <li>• Avoid photos with busy backgrounds</li>
+                      <li>• Higher resolution photos produce better results</li>
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <h2 className="text-sm font-medium text-gray-700 mb-4">Preview</h2>
+                  <PreviewPanel
+                    finalImage={finalImage}
+                    selectedPreset={selectedPreset}
+                    isProcessing={isProcessing}
+                    processingStep={processingStep}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
+              <ExportPanel
+                finalImage={finalImage}
+                disabled={isProcessing || !finalImage}
+              />
+              
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">
+                  Upload New Photo
+                </h3>
+                <ImageUploader
+                  onImageLoaded={handleImageLoaded}
                   disabled={isProcessing}
                 />
               </div>
             </div>
-
-            <div className="lg:col-span-6">
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-sm font-medium text-gray-700 mb-4">Preview</h2>
-                <PreviewPanel
-                  finalImage={finalImage}
-                  selectedPreset={selectedPreset}
-                  isProcessing={isProcessing}
-                  processingStep={processingStep}
-                />
-              </div>
-            </div>
-
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
-                <ExportPanel
-                  finalImage={finalImage}
-                  disabled={isProcessing || !finalImage}
-                />
-                
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">
-                    Upload New Photo
-                  </h3>
-                  <ImageUploader
-                    onImageLoaded={handleImageLoaded}
-                    disabled={isProcessing}
-                  />
-                </div>
-              </div>
-            </div>
           </div>
-        )}
+        </div>
       </main>
 
       <footer className="border-t border-gray-200 bg-white mt-auto">
