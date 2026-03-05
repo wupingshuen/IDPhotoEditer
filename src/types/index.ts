@@ -23,6 +23,7 @@ export interface Adjustments {
   zoom: number;
   verticalOffset: number;
   rotation: number;
+  removeBackground: boolean;
 }
 
 export interface SizePreset {

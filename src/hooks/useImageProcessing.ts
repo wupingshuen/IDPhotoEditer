@@ -31,7 +31,11 @@ export function useImageProcessing() {
     zoom: 1,
     verticalOffset: 0,
     rotation: 0,
+    removeBackground: true,
   });
+  
+  const [rotatedImage, setRotatedImage] = useState<HTMLCanvasElement | null>(null);
+  const [, setSegmentationMask] = useState<ImageData | null>(null);
   
   const [selectedPreset, setSelectedPreset] = useState<SizePreset>(SIZE_PRESETS[0]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -70,6 +74,8 @@ export function useImageProcessing() {
         ctx.drawImage(image, 0, 0);
       }
       
+      setRotatedImage(processedImage);
+      
       setProcessingStep('Removing background...');
       const tempImg = new Image();
       tempImg.src = processedImage.toDataURL();
@@ -85,6 +91,8 @@ export function useImageProcessing() {
         setIsProcessing(false);
         return;
       }
+      
+      setSegmentationMask(mask);
       
       setProcessingStep('Compositing...');
       const composite = compositeWithMask(processedImage, mask, '#FFFFFF', 8);
@@ -137,12 +145,20 @@ export function useImageProcessing() {
   }, []);
 
   useEffect(() => {
-    if (!compositeImage || !baseCrop || !selectedPreset) return;
+    if (!baseCrop || !selectedPreset) return;
     
-    let imageToProcess = compositeImage;
+    let imageToProcess: HTMLCanvasElement | null = null;
+    
+    if (adjustments.removeBackground) {
+      if (!compositeImage) return;
+      imageToProcess = compositeImage;
+    } else {
+      if (!rotatedImage) return;
+      imageToProcess = rotatedImage;
+    }
     
     if (Math.abs(adjustments.rotation) > 0.1) {
-      imageToProcess = rotateCanvas(compositeImage, adjustments.rotation);
+      imageToProcess = rotateCanvas(imageToProcess, adjustments.rotation);
     }
     
     const adjustedCrop = applyAdjustmentsToCrop(
@@ -164,7 +180,7 @@ export function useImageProcessing() {
     );
     
     setFinalImage(final);
-  }, [compositeImage, baseCrop, adjustments, selectedPreset]);
+  }, [compositeImage, rotatedImage, baseCrop, adjustments, selectedPreset]);
 
   const updatePreset = useCallback((preset: SizePreset) => {
     setSelectedPreset(preset);
@@ -184,11 +200,13 @@ export function useImageProcessing() {
 
   const reset = useCallback(() => {
     setOriginalImage(null);
+    setRotatedImage(null);
+    setSegmentationMask(null);
     setCompositeImage(null);
     setFinalImage(null);
     setFaceData(null);
     setBaseCrop(null);
-    setAdjustments({ zoom: 1, verticalOffset: 0, rotation: 0 });
+    setAdjustments({ zoom: 1, verticalOffset: 0, rotation: 0, removeBackground: true });
     setError(null);
   }, []);
 

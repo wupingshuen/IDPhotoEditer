@@ -19,6 +19,41 @@ export function ControlPanel({
   return (
     <div className="space-y-6">
       <div>
+        <h3 className="text-sm font-medium text-gray-700 mb-3">Background</h3>
+        
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => onAdjustmentsChange({ removeBackground: true })}
+            disabled={disabled}
+            className={`
+              flex-1 px-3 py-2 text-sm rounded-lg transition-all
+              ${adjustments.removeBackground
+                ? 'bg-blue-600 text-white'
+                : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
+              }
+              ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+            `}
+          >
+            Remove Background
+          </button>
+          <button
+            onClick={() => onAdjustmentsChange({ removeBackground: false })}
+            disabled={disabled}
+            className={`
+              flex-1 px-3 py-2 text-sm rounded-lg transition-all
+              ${!adjustments.removeBackground
+                ? 'bg-blue-600 text-white'
+                : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
+              }
+              ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+            `}
+          >
+            Keep Original
+          </button>
+        </div>
+      </div>
+
+      <div className="border-t border-gray-200 pt-6">
         <h3 className="text-sm font-medium text-gray-700 mb-3">Adjustments</h3>
         
         <div className="space-y-4">
